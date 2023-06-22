@@ -7,6 +7,7 @@ import org.cp.service.FleetScheduleService;
 import org.cp.service.impl.FleetScheduleServiceImpl;
 import org.cp.strategy.ChargingStrategy;
 import org.cp.strategy.FcfsStrategy;
+import org.cp.strategy.GreedyStrategy;
 import org.cp.strategy.MaxOptimalStrategy;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class Main {
     chargers.add(new Charger(2, 25, time));
 
 
+
+
     ChargingStrategy strategy = new FcfsStrategy();
     FleetScheduleService fleetScheduleService = new FleetScheduleServiceImpl(strategy);
     Response response = fleetScheduleService.getFleetChargingSchedule(trucks, chargers);
@@ -51,10 +54,26 @@ public class Main {
     strategy = new MaxOptimalStrategy();
     fleetScheduleService = new FleetScheduleServiceImpl(strategy);
     response = fleetScheduleService.getFleetChargingSchedule(trucks, chargers);
-    System.out.println("\n Charged Trucks max Optimally : ");
+    System.out.println("\n Charged Trucks max Optimally: ");
     printComplete(response);
 
+    //Truck 1 : 50 , Truck 2 : 100
+    //charger 1 - 100 , charger 2 - 50
+    // charger 2 - 50 charger 1: 100
+    time = 1;
+    trucks = new ArrayList<>();
+    trucks.add(new Truck(1, 100, 50));
+    trucks.add(new Truck(2, 100, 0));
 
+    chargers = new ArrayList<>();
+    chargers.add(new Charger(1, 120, time));
+    chargers.add(new Charger(2, 50, time));
+
+    strategy = new GreedyStrategy();
+    fleetScheduleService = new FleetScheduleServiceImpl(strategy);
+    response = fleetScheduleService.getFleetChargingSchedule(trucks, chargers);
+    System.out.println("\n Charged Trucks max Greedy: ");
+    printComplete(response);
   }
 
   private static void print(Response response){
